@@ -3,6 +3,7 @@
 #include <vector>
 #include <array>
 #include <string>
+#include <unordered_map>
 template<typename T>
 inline static bool contains(const std::vector<T>& array, const T& value) {
 	return std::ranges::find(array.begin(), array.end(), value) != array.end();
@@ -40,4 +41,14 @@ constexpr static void copyToArray(const std::string& s, std::array<char, N>& arr
 	std::copy(s.begin(), s.begin() + sizeToCopy, array.data());
 	
 	array[sizeToCopy] = 0;
+}
+
+template<typename TKey, typename TValue>
+inline static bool tryGetValue(std::unordered_map<TKey, TValue>& map, const TKey& key, TValue& ref){
+	auto it = map.find(key);
+	const bool found = it!= map.end();
+	if(found){
+		ref = *it;
+	}
+	return found;
 }

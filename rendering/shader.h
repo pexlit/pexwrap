@@ -9,6 +9,8 @@ enum class ShaderType {
 };
 struct Shader {
 	Shader(const std::filesystem::path& path);
+	Shader(Shader&& other) = default;
+	Shader(Shader& other) = default;
 	GLuint ID;
 	//GL_FRAGMENT_SHADER or GL_VERTEX_SHADER
 	ShaderType type;

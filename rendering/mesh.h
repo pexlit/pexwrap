@@ -1,5 +1,7 @@
 #pragma once
 #include "safeInclude/includeGL.h"
+#include <span>
+#include <glm/vec3.hpp>
 struct Mesh {
 	//just an array of floats
 	GLuint vertexArrayObject;
@@ -7,6 +9,9 @@ struct Mesh {
 	GLuint vertexBufferObject;
 	//an index buffer
 	GLuint elementBufferObject;
+	Mesh() = default;
+	Mesh(std::span<glm::vec3> vertices, std::span<int> indices);
+	void render(int indiceCount);
 };
 
 Mesh makeSquare();
