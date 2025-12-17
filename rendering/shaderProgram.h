@@ -22,10 +22,9 @@ struct ShaderProgram {
 
 		for (int i = 0; i < count; i++)
 		{
-			Uniform uniform{
-				.location = (GLuint)i,
-				.shaderProgramID = ID
-			};
+			Uniform uniform{};
+			uniform.location = (GLuint)i;
+			uniform.shaderProgramID = ID;
 			glGetActiveUniform(ID, uniform.location, bufSize, &nameLength, &uniform.size, &uniform.type, nameBuffer);
 			uniform.name = std::string(nameBuffer, nameLength);
 			uniforms.push_back(uniform);

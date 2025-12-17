@@ -57,7 +57,7 @@ bool initializeFont() {
 			texture,
 			glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
 			glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
-			face->glyph->advance.x
+			(unsigned int)face->glyph->advance.x
 		};
 		Characters.insert(std::pair<char, Character>(c, character));
 	}
@@ -133,7 +133,6 @@ float measureStringSize(const std::string& text) {
 	{
 		Character ch = Characters[*c];
 
-		float xpos = x + ch.Bearing.x;
 		// now advance cursors for next glyph (note that advance is number of 1/64 pixels)
 		x += (ch.Advance >> 6); // bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
 	}
