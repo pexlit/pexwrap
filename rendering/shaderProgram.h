@@ -1,45 +1,20 @@
 #pragma once
 #include "shader.h"
 #include <Uniform.h>
-#include <vector>
+#include <map>
+#include <unordered_map>
 struct ShaderProgram {
-	GLuint ID;
+	GLuint ID{};
 	Shader vertexShader;
 	Shader fragmentShader;
-	std::vector<Uniform> uniforms;
-	ShaderProgram(Shader vertexShader, Shader fragmentShader): vertexShader(vertexShader), fragmentShader(fragmentShader) {
-		ID = glCreateProgram();
-		glAttachShader(ID, vertexShader.ID);
-		glAttachShader(ID, fragmentShader.ID);
-		glLinkProgram(ID);
-
-		GLint count;
-		glGetProgramiv(ID, GL_ACTIVE_UNIFORMS, &count);
-
-		const GLsizei bufSize = 16; // maximum name length
-		GLchar nameBuffer[bufSize]; // variable name in GLSL
-		GLsizei nameLength; // name length
-
-		for (int i = 0; i < count; i++)
-		{
-			Uniform uniform{};
-			uniform.location = (GLuint)i;
-			uniform.shaderProgramID = ID;
-			glGetActiveUniform(ID, uniform.location, bufSize, &nameLength, &uniform.size, &uniform.type, nameBuffer);
-			uniform.name = std::string(nameBuffer, nameLength);
-			uniforms.push_back(uniform);
-		}
-	}
-	void enable() {
-		glUseProgram(ID);
-	}
-	Uniform* getUniform(std::string name) {
-		GLint location = glGetUniformLocation(ID, name.c_str());
-		if (location != -1) {
-			return &uniforms[location];
-		}
-		else {
-			return nullptr;
-		}
-	}
+	std::map<GLint, Uniform> uniforms;
+	std::unordered_map<std::string, Uniform> optimizedAwayUniforms;
+	ShaderProgram(Shader vertexShader, Shader fragmentShader);
+	~ShaderProgram();
+	ShaderProgram(const ShaderProgram&) = delete;
+	ShaderProgram& operator=(const ShaderProgram&) = delete;
+	void enable();
+	Uniform* getUniform(std::string name);
+private:
+	void findOptimizedAwayUniforms(const std::string &source);
 };

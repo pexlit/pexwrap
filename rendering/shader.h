@@ -16,4 +16,6 @@ struct Shader {
 	ShaderType type;
 	//wether the shader compiled correctly
 	bool success;
+	//preprocessed source code (for uniform declaration checking)
+	std::string source;
 };

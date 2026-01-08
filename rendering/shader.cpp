@@ -46,8 +46,8 @@ Shader::Shader(const std::filesystem::path& path)
 	type = (path.extension() == ".frag") ? ShaderType::Fragment : ShaderType::Vertex;
 
 	ID = glCreateShader((GLuint)type);
-	const std::string shaderCode = preprocessShaderSource(path);
-	const char* temporaryPointer = shaderCode.c_str();
+	source = preprocessShaderSource(path);
+	const char* temporaryPointer = source.c_str();
 	glShaderSource(ID, 1, &temporaryPointer, NULL);
 	glCompileShader(ID);
 

@@ -30,3 +30,4 @@ struct Mesh {
 
 Mesh makeSquare();
 Mesh makeSphere();
+Mesh makeCube();

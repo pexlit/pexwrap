@@ -193,6 +193,34 @@ void Mesh::render()
 	}
 }
 
+Mesh makeCube()
+{
+	// Unit cube centered at origin, extents from -1 to 1
+	glm::vec3 vertices[] = {
+		// Front face
+		{-1, -1,  1}, { 1, -1,  1}, { 1,  1,  1}, {-1,  1,  1},
+		// Back face
+		{ 1, -1, -1}, {-1, -1, -1}, {-1,  1, -1}, { 1,  1, -1},
+		// Left face
+		{-1, -1, -1}, {-1, -1,  1}, {-1,  1,  1}, {-1,  1, -1},
+		// Right face
+		{ 1, -1,  1}, { 1, -1, -1}, { 1,  1, -1}, { 1,  1,  1},
+		// Top face
+		{-1,  1,  1}, { 1,  1,  1}, { 1,  1, -1}, {-1,  1, -1},
+		// Bottom face
+		{-1, -1, -1}, { 1, -1, -1}, { 1, -1,  1}, {-1, -1,  1}
+	};
+	int indices[] = {
+		0, 1, 2, 0, 2, 3,       // front
+		4, 5, 6, 4, 6, 7,       // back
+		8, 9, 10, 8, 10, 11,    // left
+		12, 13, 14, 12, 14, 15, // right
+		16, 17, 18, 16, 18, 19, // top
+		20, 21, 22, 20, 22, 23  // bottom
+	};
+	return Mesh(vertices, indices);
+}
+
 Mesh makeSphere()
 {
 	// simple UV sphere centered at origin with radius 1
