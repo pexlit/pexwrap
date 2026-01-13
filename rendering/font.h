@@ -1,4 +1,5 @@
 #pragma once
+#ifdef PEXLIT_FREETYPE
 #include "safeInclude/includeGL.h"
 #include <GLFW/glfw3.h>
 #include <ft2build.h>
@@ -22,3 +23,4 @@ struct Character {
     glm::ivec2   Bearing;    // Offset from baseline to left/top of glyph
     unsigned int Advance;    // Offset to advance to next glyph
 };
+#endif

@@ -1,4 +1,5 @@
 #pragma once
+#ifdef PEXLIT_GL
 #include "safeInclude/includeGL.h"
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
@@ -67,3 +68,4 @@ struct Uniform
 		}
 	}
 };
+#endif

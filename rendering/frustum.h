@@ -1,4 +1,5 @@
 #pragma once
+#ifdef PEXLIT_GLM
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 #include <glm/mat4x4.hpp>
@@ -132,3 +133,4 @@ struct Frustum
 		return local;
 	}
 };
+#endif

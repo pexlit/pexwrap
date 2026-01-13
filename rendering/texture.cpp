@@ -1,3 +1,4 @@
+#ifdef PEXLIT_GL
 #include "texture.h"
 #include "stb_image.h"
 
@@ -57,3 +58,4 @@ void Texture::toGL()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 }
+#endif

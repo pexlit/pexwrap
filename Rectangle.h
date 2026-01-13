@@ -1,4 +1,5 @@
 #pragma once
+#ifdef PEXLIT_GLM
 #include "glm/glm.hpp"
 
 template <typename T = float, int L = 2>
@@ -30,3 +31,4 @@ struct Rect {
 	}
 };
 typedef Rect<float, 2> Rect2;
+#endif

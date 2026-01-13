@@ -1,5 +1,5 @@
 #pragma once
-
+#ifdef PEXLIT_GLM
 #include <cstdint>
 #include <glm/vec3.hpp>
 #include <random>
@@ -38,3 +38,4 @@ inline glm::dvec3 randomPointInEllipsoid(std::mt19937 &random, double radius, do
 	glm::dvec3 p = randomPointInUnitSphere(random);
 	return glm::dvec3(p.x * radius, p.y * thickness, p.z * radius);
 }
+#endif

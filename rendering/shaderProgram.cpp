@@ -1,3 +1,4 @@
+#ifdef PEXLIT_GL
 #include "shaderProgram.h"
 #include <iostream>
 #include <regex>
@@ -100,3 +101,4 @@ Uniform *ShaderProgram::getUniform(std::string name)
 	throw std::runtime_error(message);
 	#endif
 }
+#endif

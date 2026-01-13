@@ -1,3 +1,3 @@
 #pragma once
 #include <filesystem>
-std::string read_string_from_file(const std::filesystem::path& file_path);
+bool readStringFromFile(const std::filesystem::path &file_path, std::string &content);

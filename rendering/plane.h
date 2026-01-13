@@ -1,4 +1,5 @@
 #pragma once
+#ifdef PEXLIT_GLM
 #include <glm/vec3.hpp>
 #include <glm/geometric.hpp>
 
@@ -18,3 +19,4 @@ struct Plane
 		return glm::dot(normal, point) + distance;
 	}
 };
+#endif

@@ -1,4 +1,5 @@
 #pragma once
+#ifdef PEXLIT_GL
 #include "safeInclude/includeGL.h"
 #include <vector>
 #include <filesystem>
@@ -15,3 +16,4 @@ struct Texture {
 private:
 	void toGL();
 };
+#endif

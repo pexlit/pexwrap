@@ -1,4 +1,5 @@
 #pragma once
+#ifdef PEXLIT_GL
 #include "safeInclude/includeGL.h"
 #include <span>
 #include <glm/vec3.hpp>
@@ -31,3 +32,4 @@ struct Mesh {
 Mesh makeSquare();
 Mesh makeSphere();
 Mesh makeCube();
+#endif

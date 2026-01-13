@@ -1,4 +1,5 @@
 #pragma once
+#ifdef PEXLIT_GLM
 #include <glm/vec3.hpp>
 #include <functional>
 // Custom specialization of std::hash can be injected in namespace std.
@@ -10,3 +11,4 @@ struct std::hash<glm::ivec3>
 		return (size_t)vec.x + ((size_t)vec.y << 16ULL) + ((size_t)vec.z << 32ULL);
     }
 };
+#endif

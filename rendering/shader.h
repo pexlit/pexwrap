@@ -1,4 +1,5 @@
 #pragma once
+#ifdef PEXLIT_GL
 #include "safeInclude/includeGL.h"
 #include <string>
 #include <filesystem>
@@ -19,3 +20,4 @@ struct Shader {
 	//preprocessed source code (for uniform declaration checking)
 	std::string source;
 };
+#endif

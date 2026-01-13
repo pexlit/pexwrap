@@ -1,4 +1,5 @@
 #pragma once
+#ifdef PEXLIT_GLM
 #include <glm/glm.hpp>
 #include <vector>
 #include <array>
@@ -52,3 +53,4 @@ inline static bool tryGetValue(std::unordered_map<TKey, TValue>& map, const TKey
 	}
 	return found;
 }
+#endif

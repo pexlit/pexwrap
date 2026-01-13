@@ -1,3 +1,4 @@
+#ifdef PEXLIT_FREETYPE
 #include "font.h"
 #include <iostream>
 #include <shader.h>
@@ -138,3 +139,4 @@ float measureStringSize(const std::string& text) {
 	}
 	return x;
 }
+#endif

@@ -1,4 +1,5 @@
 #pragma once
+#ifdef PEXLIT_GL
 #include "pexlit/safeInclude/includeGL.h"
 
 struct RenderState
@@ -38,3 +39,4 @@ struct RenderState
 			glDisable(GL_BLEND);
 	}
 };
+#endif

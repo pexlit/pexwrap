@@ -1,4 +1,5 @@
 #pragma once
+#ifdef PEXLIT_GL
 #include "pexlit/safeInclude/includeGL.h"
 #include <glm/glm.hpp>
 #include <cmath>
@@ -33,3 +34,4 @@ inline void initReversedZ()
 {
 	glClipControl(GL_LOWER_LEFT, GL_ZERO_TO_ONE);
 }
+#endif

@@ -1,4 +1,5 @@
 #pragma once
+#ifdef PEXLIT_GL
 #include <filesystem>
 #include <string>
 #include <unordered_map>
@@ -46,3 +47,4 @@ private:
 
 // Global atlas instance
 PBRAtlas &getPBRAtlas();
+#endif

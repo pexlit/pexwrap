@@ -1,3 +1,4 @@
+#ifdef PEXLIT_GL
 #include "shader.h"
 #include <string>
 #include <iostream>
@@ -9,7 +10,7 @@
 
 static std::string preprocessShaderSource(const std::filesystem::path &path)
 {
-	const std::string source = read_string_from_file(path);
+	const std::string source = readStringFromFile(path);
 	std::stringstream input(source);
 	std::stringstream output;
 	std::string line;
@@ -61,3 +62,4 @@ Shader::Shader(const std::filesystem::path& path)
 		std::cout << "Error while compiling shader" + path.string() + "\n" << infoLog << std::endl;
 	}
 }
+#endif

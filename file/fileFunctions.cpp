@@ -2,14 +2,17 @@
 #include <string>
 #include <filesystem>
 #include <fstream>
-std::string read_string_from_file(const std::filesystem::path& file_path) {
+bool readStringFromFile(const std::filesystem::path &file_path, std::string &content)
+{
 	const std::ifstream input_stream(file_path, std::ios_base::binary);
-	if (input_stream.fail()) {
-		throw std::runtime_error("Failed to open file");
+	if (input_stream.fail())
+	{
+		return false;
 	}
 
 	std::stringstream buffer;
 	buffer << input_stream.rdbuf();
 
-	return buffer.str();
+	content = buffer.str();
+	return true;
 }

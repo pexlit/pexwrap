@@ -1,4 +1,5 @@
 #pragma once
+#ifdef PEXLIT_JSON
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
@@ -57,3 +58,4 @@ namespace glm {
 		j["w"].get_to(q.w);
 	}
 }
+#endif

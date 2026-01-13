@@ -1,3 +1,4 @@
+#ifdef PEXLIT_GL
 #include <mesh.h>
 #include <vector>
 #include <glm/glm.hpp>
@@ -274,3 +275,4 @@ Mesh makeSphere()
 
 	return Mesh(vertices, indices);
 }
+#endif

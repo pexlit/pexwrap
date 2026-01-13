@@ -1,5 +1,5 @@
 #pragma once
-
+#ifdef PEXLIT_GLM
 #include <glm/vec3.hpp>
 #include <cmath>
 
@@ -27,3 +27,4 @@ inline glm::vec3 hsvToRgb(float hue, float saturation, float value)
 
 	return rgb + glm::vec3(m);
 }
+#endif

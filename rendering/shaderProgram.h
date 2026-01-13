@@ -1,4 +1,5 @@
 #pragma once
+#ifdef PEXLIT_GL
 #include "shader.h"
 #include <Uniform.h>
 #include <map>
@@ -18,3 +19,4 @@ struct ShaderProgram {
 private:
 	void findOptimizedAwayUniforms(const std::string &source);
 };
+#endif

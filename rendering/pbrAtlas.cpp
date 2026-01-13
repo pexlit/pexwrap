@@ -1,3 +1,4 @@
+#ifdef PEXLIT_GL
 #include "pbrAtlas.h"
 #include "stb_image.h"
 #include "stb_image_write.h"
@@ -272,3 +273,4 @@ void PBRAtlas::packTextures(const std::filesystem::path &sourceDir, const std::f
 
 	std::cout << "Saved PBR atlas to cache\n";
 }
+#endif
