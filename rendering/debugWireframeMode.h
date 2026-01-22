@@ -1,8 +1,3 @@
 #pragma once
 
-enum class DebugWireframeMode
-{
-	Solid,
-	ShadedWireframe,
-	WireframeOnly
-};
+enum class DebugWireframeMode { Solid, ShadedWireframe, WireframeOnly };

@@ -1,4 +1,4 @@
-//this file includes header files with implementations.
+// this file includes header files with implementations.
 #ifdef PEXLIT_STB
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"

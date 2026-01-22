@@ -1,9 +1,9 @@
 #pragma once
 #ifdef PEXLIT_GL
+#include "pexlit/safeInclude/includeGL.h"
 #include <filesystem>
 #include <string>
 #include <unordered_map>
-#include "pexlit/safeInclude/includeGL.h"
 
 struct Texture;
 
@@ -11,14 +11,13 @@ struct Texture;
 // Packs multiple materials into atlas textures:
 // - Material atlas: Grayscale (R) + Roughness (G) + AO (B) + Height (A)
 // - Normal atlas: Normal RGB
-struct PBRAtlas
-{
+struct PBRAtlas {
 	static constexpr int atlasSize = 1024; // Each texture is 1K
 	static constexpr int maxMaterials = 8; // Max materials in atlas
 
 	// Atlas textures (2D array textures for efficient sampling)
 	GLuint materialArray{}; // RGBA: grayscale, roughness, AO, height
-	GLuint normalArray{};   // RGB: normal map
+	GLuint normalArray{};	// RGB: normal map
 
 	// Material name to array index mapping
 	std::unordered_map<std::string, int> materialIndices;
@@ -39,7 +38,7 @@ struct PBRAtlas
 	// Bind textures for rendering
 	void bind(int materialUnit, int normalUnit) const;
 
-private:
+  private:
 	void packTextures(const std::filesystem::path &sourceDir, const std::filesystem::path &cacheDir);
 	bool loadFromCache(const std::filesystem::path &cacheDir);
 	void createArrayTextures();

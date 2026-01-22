@@ -1,22 +1,20 @@
 #ifdef PEXLIT_FREETYPE
 #include "font.h"
 #include <iostream>
+#include <mesh.h>
 #include <shader.h>
 #include <shaderProgram.h>
-#include <mesh.h>
 std::map<char, Character> Characters;
 Mesh textMesh;
 FT_Library ft;
 bool initializeFont() {
-	//initialize truetype library
-	if (FT_Init_FreeType(&ft))
-	{
+	// initialize truetype library
+	if (FT_Init_FreeType(&ft)) {
 		std::cout << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
 		return false;
 	}
 	FT_Face face;
-	if (FT_New_Face(ft, "data/font/consolas.ttf", 0, &face))
-	{
+	if (FT_New_Face(ft, "data/font/consolas.ttf", 0, &face)) {
 		std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;
 		return false;
 	}
@@ -25,11 +23,9 @@ bool initializeFont() {
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // disable byte-alignment restriction
 
 	// load first 128 characters of ASCII set
-	for (unsigned char c = 0; c < 128; c++)
-	{
-		// load character glyph 
-		if (FT_Load_Char(face, c, FT_LOAD_RENDER))
-		{
+	for (unsigned char c = 0; c < 128; c++) {
+		// load character glyph
+		if (FT_Load_Char(face, c, FT_LOAD_RENDER)) {
 			std::cout << "ERROR::FREETYTPE: Failed to load Glyph" << std::endl;
 			continue;
 		}
@@ -38,14 +34,7 @@ bool initializeFont() {
 		glGenTextures(1, &texture);
 		glBindTexture(GL_TEXTURE_2D, texture);
 		glTexImage2D(
-			GL_TEXTURE_2D,
-			0,
-			GL_RED,
-			face->glyph->bitmap.width,
-			face->glyph->bitmap.rows,
-			0,
-			GL_RED,
-			GL_UNSIGNED_BYTE,
+			GL_TEXTURE_2D, 0, GL_RED, face->glyph->bitmap.width, face->glyph->bitmap.rows, 0, GL_RED, GL_UNSIGNED_BYTE,
 			face->glyph->bitmap.buffer
 		);
 		// set texture options
@@ -55,10 +44,8 @@ bool initializeFont() {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		// now store character for later use
 		Character character = {
-			texture,
-			glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
-			glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
-			(unsigned int)face->glyph->advance.x
+			texture, glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
+			glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top), (unsigned int)face->glyph->advance.x
 		};
 		Characters.insert(std::pair<char, Character>(c, character));
 	}
@@ -81,9 +68,8 @@ bool initializeFont() {
 
 // render line of text
 // -------------------
-void RenderText(ShaderProgram& shader, std::string text, glm::vec2 pos00, float scale, glm::vec3 color)
-{
-	// activate corresponding render state	
+void RenderText(ShaderProgram &shader, std::string text, glm::vec2 pos00, float scale, glm::vec3 color) {
+	// activate corresponding render state
 	shader.enable();
 	glUniform3f(glGetUniformLocation(shader.ID, "textColor"), color.x, color.y, color.z);
 	glActiveTexture(GL_TEXTURE0);
@@ -92,8 +78,7 @@ void RenderText(ShaderProgram& shader, std::string text, glm::vec2 pos00, float 
 	glm::vec2 pos = pos00;
 	// iterate through all characters
 	std::string::const_iterator c;
-	for (c = text.begin(); c != text.end(); c++)
-	{
+	for (c = text.begin(); c != text.end(); c++) {
 		Character ch = Characters[*c];
 
 		float xpos = pos.x + ch.Bearing.x * scale;
@@ -102,15 +87,9 @@ void RenderText(ShaderProgram& shader, std::string text, glm::vec2 pos00, float 
 		float w = ch.Size.x * scale;
 		float h = ch.Size.y * scale;
 		// update VBO for each character
-		float vertices[6][4] = {
-			{ xpos,     ypos + h,   0.0f, 0.0f },
-			{ xpos,     ypos,       0.0f, 1.0f },
-			{ xpos + w, ypos,       1.0f, 1.0f },
+		float vertices[6][4] = {{xpos, ypos + h, 0.0f, 0.0f}, {xpos, ypos, 0.0f, 1.0f},		{xpos + w, ypos, 1.0f, 1.0f},
 
-			{ xpos,     ypos + h,   0.0f, 0.0f },
-			{ xpos + w, ypos,       1.0f, 1.0f },
-			{ xpos + w, ypos + h,   1.0f, 0.0f }
-		};
+								{xpos, ypos + h, 0.0f, 0.0f}, {xpos + w, ypos, 1.0f, 1.0f}, {xpos + w, ypos + h, 1.0f, 0.0f}};
 		// render glyph texture over quad
 		glBindTexture(GL_TEXTURE_2D, ch.TextureID);
 		// update content of VBO memory
@@ -121,21 +100,23 @@ void RenderText(ShaderProgram& shader, std::string text, glm::vec2 pos00, float 
 		// render quad
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		// now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-		pos.x += (ch.Advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
+		pos.x += (ch.Advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by
+											// 64 to get amount of pixels))
 	}
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-float measureStringSize(const std::string& text) {
+float measureStringSize(const std::string &text) {
 	float x = 0;
 	std::string::const_iterator c;
-	for (c = text.begin(); c != text.end(); c++)
-	{
+	for (c = text.begin(); c != text.end(); c++) {
 		Character ch = Characters[*c];
 
 		// now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-		x += (ch.Advance >> 6); // bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
+		x +=
+			(ch.Advance >> 6
+			); // bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
 	}
 	return x;
 }

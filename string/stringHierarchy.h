@@ -9,5 +9,5 @@ struct StringHierarchy {
 	std::vector<StringHierarchy *> children{};
 	StringHierarchy(char charachter, size_t start) : charachter(charachter), start(start) {}
 	~StringHierarchy();
-	StringHierarchy* cloneWithOffset(size_t offset);
+	StringHierarchy *cloneWithOffset(size_t offset);
 };

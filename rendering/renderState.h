@@ -2,8 +2,7 @@
 #ifdef PEXLIT_GL
 #include "pexlit/safeInclude/includeGL.h"
 
-struct RenderState
-{
+struct RenderState {
 	bool cullFace;
 	bool cullBack{true}; // true=cull back faces (CCW front), false=cull front faces
 	bool depthWrite;
@@ -13,14 +12,11 @@ struct RenderState
 	GLenum blendDst{GL_ZERO};
 	GLenum depthFunc{GL_GREATER}; // Reversed-Z for main scene; model viewer overrides to GL_LESS
 
-	void apply() const
-	{
-		if (cullFace)
-		{
+	void apply() const {
+		if (cullFace) {
 			glEnable(GL_CULL_FACE);
 			glCullFace(cullBack ? GL_BACK : GL_FRONT);
-		}
-		else
+		} else
 			glDisable(GL_CULL_FACE);
 
 		// Always enable depth test - use GL_ALWAYS for depthFunc and depthWrite=false
@@ -30,12 +26,10 @@ struct RenderState
 		glDepthFunc(depthFunc);
 		glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
 
-		if (blend)
-		{
+		if (blend) {
 			glEnable(GL_BLEND);
 			glBlendFunc(blendSrc, blendDst);
-		}
-		else
+		} else
 			glDisable(GL_BLEND);
 	}
 };

@@ -1,11 +1,10 @@
 #pragma once
 #ifdef PEXLIT_GLM
-#include <glm/vec3.hpp>
 #include <cmath>
+#include <glm/vec3.hpp>
 
 // Convert HSV (all components 0-1) to RGB
-inline glm::vec3 hsvToRgb(float hue, float saturation, float value)
-{
+inline glm::vec3 hsvToRgb(float hue, float saturation, float value) {
 	float h = hue * 6.0f;
 	float c = value * saturation;
 	float x = c * (1.0f - std::abs(std::fmod(h, 2.0f) - 1.0f));
