@@ -9,7 +9,7 @@ StringHierarchy::~StringHierarchy() {
 
 StringHierarchy *StringHierarchy::cloneWithOffset(size_t offset) {
 
-	StringHierarchy *clone = new StringHierarchy(charachter, start + offset);
+	StringHierarchy *clone = new StringHierarchy(character, start + offset);
 	clone->end = end + offset;
 	clone->children.resize(children.size());
 	for (auto [source, dest] : std::views::zip(children, clone->children)) {

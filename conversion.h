@@ -15,7 +15,7 @@ constexpr bool hexCharToByte(char in, uint8_t &dest) {
 		dest = in - '0';
 	} else {
 		// 97('a') - 65('A') = 32. we OR it in to make it lowercase so we don't have to check for both lower and upper case.
-		// non charachters will be modified, but will still fall outside of the range.
+		// non characters will be modified, but will still fall outside of the range.
 		char lowerCase = in | (char)('a' - 'A');
 		if (lowerCase >= 'a' && lowerCase <= 'f')
 			dest = lowerCase + (10 - 'a');
@@ -26,7 +26,7 @@ constexpr bool hexCharToByte(char in, uint8_t &dest) {
 }
 
 constexpr bool hex2Bytes(char *inStart, char *inEnd, std::vector<uint8_t> &bytes) {
-	// amount of charachters doesn't match
+	// amount of characters doesn't match
 	size_t amount = inEnd - inStart;
 	if (amount % 2)
 		return false;
@@ -44,7 +44,7 @@ constexpr bool hex2Bytes(char *inStart, char *inEnd, std::vector<uint8_t> &bytes
 	return true;
 }
 constexpr bool bin2Bytes(char *inStart, char *inEnd, std::vector<uint8_t> &bytes) {
-	// amount of charachters doesn't match
+	// amount of characters doesn't match
 	size_t amount = inEnd - inStart;
 	if (amount % 8)
 		return false;
