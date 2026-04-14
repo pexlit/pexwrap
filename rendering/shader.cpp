@@ -6,10 +6,14 @@
 #include <functional>
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 
 static std::string preprocessShaderSource(const std::filesystem::path &path) {
-	const std::string source = readStringFromFile(path);
+	std::string source;
+	if (!readStringFromFile(path, source)) {
+		throw std::runtime_error("Failed to read shader source: " + path.string());
+	}
 	std::stringstream input(source);
 	std::stringstream output;
 	std::string line;
