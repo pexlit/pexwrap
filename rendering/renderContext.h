@@ -38,6 +38,7 @@ struct RenderContext {
 	float screenHeight{};
 	float fovY{};
 	float nearPlane{0.1f}; // Near plane distance for depth linearization
+	float ambientLight{};  // Optional ambient floor for debugger-style preview lighting
 	DebugViewMode debugViewMode{};
 	bool wireframePass{};
 	bool showStarChunks{};
