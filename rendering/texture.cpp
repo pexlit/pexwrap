@@ -1,6 +1,22 @@
 #ifdef PEXLIT_GL
+#include "model/ddsTexture.h"
 #include "texture.h"
 #include "stb_image.h"
+
+namespace
+{
+DdsTextureUploadObserver ddsTextureUploadObserver;
+}
+
+void setDdsTextureUploadObserverForTests(DdsTextureUploadObserver observer)
+{
+	ddsTextureUploadObserver = std::move(observer);
+}
+
+void resetDdsTextureUploadObserverForTests()
+{
+	ddsTextureUploadObserver = {};
+}
 
 Texture::Texture(GLuint width, GLuint height, uint8_t *data)
 	: data(data ? data : new uint8_t[3 * width * height]), width(width), height(height) {
@@ -19,6 +35,35 @@ Texture::Texture(
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+}
+
+Texture::Texture(const DdsTextureData &ddsTexture)
+	: data(nullptr), width(ddsTexture.width), height(ddsTexture.height), ID(0) {
+	if (ddsTextureUploadObserver) {
+		ddsTextureUploadObserver();
+	}
+	glGenTextures(1, &ID);
+	glBindTexture(GL_TEXTURE_2D, ID);
+	const GLenum internalFormat = glInternalFormatForDdsCompressionFormat(ddsTexture.format);
+	for (size_t mipIndex = 0; mipIndex < ddsTexture.mipLevels.size(); ++mipIndex) {
+		const DdsMipLevel &mipLevel = ddsTexture.mipLevels[mipIndex];
+		glCompressedTexImage2D(
+			GL_TEXTURE_2D,
+			(GLint)mipIndex,
+			internalFormat,
+			(GLsizei)mipLevel.width,
+			(GLsizei)mipLevel.height,
+			0,
+			(GLsizei)mipLevel.bytes.size(),
+			mipLevel.bytes.data()
+		);
+	}
+	glTexParameteri(
+		GL_TEXTURE_2D,
+		GL_TEXTURE_MIN_FILTER,
+		ddsTexture.mipLevels.size() > 1 ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR
+	);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 }
 
