@@ -4,6 +4,8 @@
 #include <filesystem>
 #include <string>
 #include <unordered_map>
+#include <utility>
+#include <vector>
 
 struct Texture;
 
@@ -31,6 +33,10 @@ struct PBRAtlas {
 
 	// Initialize atlas, loading from cache or packing from source
 	void init(const std::filesystem::path &sourceDir, const std::filesystem::path &cacheDir);
+	void init(
+		const std::filesystem::path &sourceDir,
+		const std::filesystem::path &cacheDir,
+		const std::vector<std::pair<std::string, std::string>> &materials);
 
 	// Get texture array index for a material name (returns 0/grass if not found)
 	int getMaterialIndex(const std::string &name) const;
@@ -39,8 +45,13 @@ struct PBRAtlas {
 	void bind(int materialUnit, int normalUnit) const;
 
   private:
-	void packTextures(const std::filesystem::path &sourceDir, const std::filesystem::path &cacheDir);
-	bool loadFromCache(const std::filesystem::path &cacheDir);
+	void packTextures(
+		const std::filesystem::path &sourceDir,
+		const std::filesystem::path &cacheDir,
+		const std::vector<std::pair<std::string, std::string>> &materials);
+	bool loadFromCache(
+		const std::filesystem::path &cacheDir,
+		const std::vector<std::pair<std::string, std::string>> &materials);
 	void createArrayTextures();
 };
 

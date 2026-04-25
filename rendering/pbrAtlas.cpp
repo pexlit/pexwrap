@@ -27,15 +27,26 @@ void PBRAtlas::cleanup() {
 }
 
 void PBRAtlas::init(const std::filesystem::path &sourceDir, const std::filesystem::path &cacheDir) {
+	static const std::vector<std::pair<std::string, std::string>> defaultMaterials = {
+		{"grass", "grass"}, {"ground", "ground"}, {"gravel", "gravel"}
+	};
+	init(sourceDir, cacheDir, defaultMaterials);
+}
+
+void PBRAtlas::init(
+	const std::filesystem::path &sourceDir,
+	const std::filesystem::path &cacheDir,
+	const std::vector<std::pair<std::string, std::string>> &materials)
+{
 	// Try to load from cache first
-	if (loadFromCache(cacheDir)) {
+	if (loadFromCache(cacheDir, materials)) {
 		std::cout << "Loaded PBR atlas from cache\n";
 		return;
 	}
 
 	// Otherwise pack from source
 	std::cout << "Packing PBR textures...\n";
-	packTextures(sourceDir, cacheDir);
+	packTextures(sourceDir, cacheDir, materials);
 }
 
 int PBRAtlas::getMaterialIndex(const std::string &name) const {
@@ -52,7 +63,10 @@ void PBRAtlas::bind(int materialUnit, int normalUnit) const {
 	glBindTexture(GL_TEXTURE_2D_ARRAY, normalArray);
 }
 
-bool PBRAtlas::loadFromCache(const std::filesystem::path &cacheDir) {
+bool PBRAtlas::loadFromCache(
+	const std::filesystem::path &cacheDir,
+	const std::vector<std::pair<std::string, std::string>> &materials)
+{
 	std::filesystem::path materialPath = cacheDir / "material_atlas.png";
 	std::filesystem::path normalPath = cacheDir / "normal_atlas.png";
 
@@ -70,6 +84,10 @@ bool PBRAtlas::loadFromCache(const std::filesystem::path &cacheDir) {
 	}
 
 	materialCount = h / atlasSize;
+	if (materialCount != static_cast<int>(materials.size())) {
+		stbi_image_free(materialData);
+		return false;
+	}
 
 	// Load normal atlas
 	unsigned char *normalData = stbi_load(normalPath.string().c_str(), &w, &h, &channels, 3);
@@ -117,19 +135,18 @@ bool PBRAtlas::loadFromCache(const std::filesystem::path &cacheDir) {
 	stbi_image_free(normalData);
 
 	// Set up material indices (order must match packing order)
-	materialIndices["grass"] = 0;
-	materialIndices["ground"] = 1;
-	materialIndices["gravel"] = 2;
+	materialIndices.clear();
+	for (int materialIndex = 0; materialIndex < materialCount; ++materialIndex)
+		materialIndices[materials[static_cast<std::size_t>(materialIndex)].first] = materialIndex;
 
 	return true;
 }
 
-void PBRAtlas::packTextures(const std::filesystem::path &sourceDir, const std::filesystem::path &cacheDir) {
-	// Material names and their source folders
-	std::vector<std::pair<std::string, std::string>> materials = {
-		{"grass", "grass"}, {"ground", "ground"}, {"gravel", "gravel"}
-	};
-
+void PBRAtlas::packTextures(
+	const std::filesystem::path &sourceDir,
+	const std::filesystem::path &cacheDir,
+	const std::vector<std::pair<std::string, std::string>> &materials)
+{
 	materialCount = (int)materials.size();
 
 	// Allocate combined data for cache saving
