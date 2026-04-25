@@ -21,9 +21,9 @@ struct Mesh {
 	Mesh &operator=(const Mesh &) = delete;
 	Mesh(Mesh &&other) noexcept;
 	Mesh &operator=(Mesh &&other) noexcept;
-	~Mesh();
+	virtual ~Mesh();
 	inline explicit operator bool() const { return vertexArrayObject != 0; }
-	void render();
+	virtual void render();
 
 	static void calculateNormals(std::span<glm::vec3> vertices, std::span<int> indices, std::vector<glm::vec3> &outNormals);
 };
