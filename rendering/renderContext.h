@@ -42,6 +42,7 @@ struct RenderContext {
 	DebugViewMode debugViewMode{};
 	bool wireframePass{};
 	bool showStarChunks{};
+	bool showTerrainChunks{};
 	VegetationSystem *vegetationSystem{};
 	unsigned int sceneDepthTexture{}; // Scene depth texture for water/atmosphere shaders
 	glm::ivec2 screenSize{};		  // Screen dimensions for depth texture sampling
