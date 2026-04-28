@@ -5,6 +5,7 @@
 struct RenderState {
 	bool cullFace;
 	bool cullBack{true}; // true=cull back faces (CCW front), false=cull front faces
+	bool depthTest{true};
 	bool depthWrite;
 	bool wireframe;
 	bool blend;
@@ -19,9 +20,10 @@ struct RenderState {
 		} else
 			glDisable(GL_CULL_FACE);
 
-		// Always enable depth test - use GL_ALWAYS for depthFunc and depthWrite=false
-		// to achieve "no depth testing" behavior. This is simpler than toggling depth test.
-		glEnable(GL_DEPTH_TEST);
+		if (depthTest)
+			glEnable(GL_DEPTH_TEST);
+		else
+			glDisable(GL_DEPTH_TEST);
 		glDepthMask(depthWrite ? GL_TRUE : GL_FALSE);
 		glDepthFunc(depthFunc);
 		glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
