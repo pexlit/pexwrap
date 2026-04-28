@@ -66,6 +66,34 @@ bool initializeFont() {
 	return true;
 }
 
+void cleanupFont() {
+	for (auto &[_, character] : Characters) {
+		if (character.TextureID) {
+			glDeleteTextures(1, &character.TextureID);
+			character.TextureID = 0;
+		}
+	}
+	Characters.clear();
+
+	if (textMesh.elementBufferObject) {
+		glDeleteBuffers(1, &textMesh.elementBufferObject);
+		textMesh.elementBufferObject = 0;
+	}
+	if (textMesh.normalBufferObject) {
+		glDeleteBuffers(1, &textMesh.normalBufferObject);
+		textMesh.normalBufferObject = 0;
+	}
+	if (textMesh.vertexBufferObject) {
+		glDeleteBuffers(1, &textMesh.vertexBufferObject);
+		textMesh.vertexBufferObject = 0;
+	}
+	if (textMesh.vertexArrayObject) {
+		glDeleteVertexArrays(1, &textMesh.vertexArrayObject);
+		textMesh.vertexArrayObject = 0;
+	}
+	textMesh.indiceCount = 0;
+}
+
 // render line of text
 // -------------------
 void RenderText(ShaderProgram &shader, std::string text, glm::vec2 pos00, float scale, glm::vec3 color) {

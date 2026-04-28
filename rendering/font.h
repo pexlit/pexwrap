@@ -12,6 +12,7 @@
 
 constexpr int fontPixelSize = 48;
 bool initializeFont();
+void cleanupFont();
 
 void RenderText(ShaderProgram &shader, std::string text, glm::vec2 pos00, float scale, glm::vec3 color);
 
