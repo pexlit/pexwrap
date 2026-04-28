@@ -1,12 +1,31 @@
 #ifdef PEXLIT_GL
 #include "pbrAtlas.h"
+#include "texture.h"
 #include "stb_image.h"
 #include "stb_image_write.h"
 #include <cmath>
 #include <iostream>
+#include <stdexcept>
 #include <vector>
 
 static PBRAtlas globalAtlas;
+
+namespace
+{
+std::string findPbrTextureFile(const std::filesystem::path &materialDir, const char *suffix)
+{
+	if (!std::filesystem::exists(materialDir))
+		return {};
+
+	for (const auto &entry : std::filesystem::directory_iterator(materialDir)) {
+		const std::string filename = entry.path().filename().string();
+		if (filename.find(suffix) != std::string::npos)
+			return entry.path().string();
+	}
+
+	return {};
+}
+}
 
 PBRAtlas &getPBRAtlas() { return globalAtlas; }
 
@@ -24,11 +43,17 @@ void PBRAtlas::cleanup() {
 		glDeleteTextures(1, &normalArray);
 		normalArray = 0;
 	}
+
+	for (auto &[name, previewTexture] : previewTextures) {
+		(void)name;
+		delete previewTexture;
+	}
+	previewTextures.clear();
 }
 
 void PBRAtlas::init(const std::filesystem::path &sourceDir, const std::filesystem::path &cacheDir) {
 	static const std::vector<std::pair<std::string, std::string>> defaultMaterials = {
-		{"grass", "grass"}, {"ground", "ground"}, {"gravel", "gravel"}
+		{"grass", "grass"}, {"soil", "ground"}, {"gravel", "gravel"}, {"snow", "snow"}
 	};
 	init(sourceDir, cacheDir, defaultMaterials);
 }
@@ -38,8 +63,11 @@ void PBRAtlas::init(
 	const std::filesystem::path &cacheDir,
 	const std::vector<std::pair<std::string, std::string>> &materials)
 {
+	configureMaterials(materials);
+
 	// Try to load from cache first
 	if (loadFromCache(cacheDir, materials)) {
+		loadPreviewTextures(sourceDir, materials);
 		std::cout << "Loaded PBR atlas from cache\n";
 		return;
 	}
@@ -47,13 +75,27 @@ void PBRAtlas::init(
 	// Otherwise pack from source
 	std::cout << "Packing PBR textures...\n";
 	packTextures(sourceDir, cacheDir, materials);
+	loadPreviewTextures(sourceDir, materials);
 }
 
 int PBRAtlas::getMaterialIndex(const std::string &name) const {
 	auto it = materialIndices.find(name);
 	if (it != materialIndices.end())
 		return it->second;
-	return 0; // Default to first material (grass)
+	throw std::runtime_error("Unknown PBR terrain material: " + name);
+}
+
+const std::vector<std::string> &PBRAtlas::getMaterialNames() const
+{
+	return materialNames;
+}
+
+Texture *PBRAtlas::getMaterialPreviewTexture(const std::string &name) const
+{
+	auto it = previewTextures.find(name);
+	if (it != previewTextures.end())
+		return it->second;
+	return nullptr;
 }
 
 void PBRAtlas::bind(int materialUnit, int normalUnit) const {
@@ -61,6 +103,40 @@ void PBRAtlas::bind(int materialUnit, int normalUnit) const {
 	glBindTexture(GL_TEXTURE_2D_ARRAY, materialArray);
 	glActiveTexture(GL_TEXTURE0 + normalUnit);
 	glBindTexture(GL_TEXTURE_2D_ARRAY, normalArray);
+}
+
+void PBRAtlas::configureMaterials(const std::vector<std::pair<std::string, std::string>> &materials)
+{
+	materialIndices.clear();
+	materialNames.clear();
+	materialNames.reserve(materials.size());
+
+	for (int materialIndex = 0; materialIndex < static_cast<int>(materials.size()); ++materialIndex) {
+		const std::string &name = materials[static_cast<std::size_t>(materialIndex)].first;
+		materialNames.push_back(name);
+		materialIndices[name] = materialIndex;
+	}
+
+	materialCount = static_cast<int>(materials.size());
+}
+
+void PBRAtlas::loadPreviewTextures(
+	const std::filesystem::path &sourceDir,
+	const std::vector<std::pair<std::string, std::string>> &materials)
+{
+	for (auto &[name, previewTexture] : previewTextures) {
+		(void)name;
+		delete previewTexture;
+	}
+	previewTextures.clear();
+
+	for (const auto &[name, folder] : materials) {
+		const std::string colorFile = findPbrTextureFile(sourceDir / folder, "_Color.png");
+		if (colorFile.empty())
+			continue;
+
+		previewTextures[name] = new Texture(colorFile);
+	}
 }
 
 bool PBRAtlas::loadFromCache(
@@ -155,25 +231,15 @@ void PBRAtlas::packTextures(
 
 	for (int matIdx = 0; matIdx < materialCount; ++matIdx) {
 		const auto &[name, folder] = materials[matIdx];
-		materialIndices[name] = matIdx;
 
 		std::filesystem::path matDir = sourceDir / folder;
 
 		// Find texture files (they have prefixes like Grass005_1K-PNG_)
-		std::string colorFile, roughnessFile, aoFile, displacementFile, normalFile;
-		for (const auto &entry : std::filesystem::directory_iterator(matDir)) {
-			std::string filename = entry.path().filename().string();
-			if (filename.find("_Color.png") != std::string::npos)
-				colorFile = entry.path().string();
-			else if (filename.find("_Roughness.png") != std::string::npos)
-				roughnessFile = entry.path().string();
-			else if (filename.find("_AmbientOcclusion.png") != std::string::npos)
-				aoFile = entry.path().string();
-			else if (filename.find("_Displacement.png") != std::string::npos)
-				displacementFile = entry.path().string();
-			else if (filename.find("_NormalGL.png") != std::string::npos)
-				normalFile = entry.path().string();
-		}
+		const std::string colorFile = findPbrTextureFile(matDir, "_Color.png");
+		const std::string roughnessFile = findPbrTextureFile(matDir, "_Roughness.png");
+		const std::string aoFile = findPbrTextureFile(matDir, "_AmbientOcclusion.png");
+		const std::string displacementFile = findPbrTextureFile(matDir, "_Displacement.png");
+		const std::string normalFile = findPbrTextureFile(matDir, "_NormalGL.png");
 
 		// Load textures
 		int w, h, c;

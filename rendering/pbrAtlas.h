@@ -38,13 +38,22 @@ struct PBRAtlas {
 		const std::filesystem::path &cacheDir,
 		const std::vector<std::pair<std::string, std::string>> &materials);
 
-	// Get texture array index for a material name (returns 0/grass if not found)
+	// Get texture array index for a material name
 	int getMaterialIndex(const std::string &name) const;
+	const std::vector<std::string> &getMaterialNames() const;
+	Texture *getMaterialPreviewTexture(const std::string &name) const;
 
 	// Bind textures for rendering
 	void bind(int materialUnit, int normalUnit) const;
 
   private:
+	std::vector<std::string> materialNames;
+	std::unordered_map<std::string, Texture *> previewTextures;
+
+	void configureMaterials(const std::vector<std::pair<std::string, std::string>> &materials);
+	void loadPreviewTextures(
+		const std::filesystem::path &sourceDir,
+		const std::vector<std::pair<std::string, std::string>> &materials);
 	void packTextures(
 		const std::filesystem::path &sourceDir,
 		const std::filesystem::path &cacheDir,
