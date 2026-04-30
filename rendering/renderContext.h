@@ -32,6 +32,7 @@ inline double computeScaledPosition(const glm::dvec3 &relativePos, glm::vec3 &ou
 // Shared data for rendering from the camera's point of view.
 struct RenderContext {
 	glm::mat4 worldToScreen;
+	glm::mat4 screenRayToWorld{1.0f}; // Camera local ray basis without translation, for screen-space ray reconstruction
 	glm::dvec3 cameraPosition;
 	Frustum frustum;
 	float time{};
@@ -46,6 +47,7 @@ struct RenderContext {
 	bool showTerrainChunks{};
 	VegetationSystem *vegetationSystem{};
 	unsigned int sceneDepthTexture{}; // Scene depth texture for water/atmosphere shaders
+	unsigned int sceneColorTexture{}; // Copied scene color for shader-owned transparent compositing
 	glm::ivec2 screenSize{};		  // Screen dimensions for depth texture sampling
 
 	// Deferred transparent sphere rendering - collected during opaque pass, rendered later
