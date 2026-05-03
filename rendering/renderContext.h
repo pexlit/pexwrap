@@ -43,6 +43,7 @@ struct RenderContext {
 	bool lightingEnabled{true};
 	DebugViewMode debugViewMode{};
 	bool wireframePass{};
+	bool backfaceCullingEnabled{true};
 	bool showStarChunks{};
 	bool showTerrainChunks{};
 	VegetationSystem *vegetationSystem{};
