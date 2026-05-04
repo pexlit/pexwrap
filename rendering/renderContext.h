@@ -7,9 +7,65 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/mat4x4.hpp>
 #include <glm/vec3.hpp>
+#include <stdexcept>
 #include <vector>
 
-struct VegetationSystem;
+namespace renderContextDetail
+{
+	template<class T>
+	const void* renderServiceKey()
+	{
+		static const char key{};
+		return &key;
+	}
+}
+
+struct RenderServiceEntry
+{
+	const void* key{};
+	void* service{};
+};
+
+struct RenderServiceRegistry
+{
+	template<class T>
+	void set(T& service)
+	{
+		const void* key = renderContextDetail::renderServiceKey<T>();
+		for (RenderServiceEntry& entry : entries)
+		{
+			if (entry.key == key)
+			{
+				entry.service = &service;
+				return;
+			}
+		}
+		entries.push_back(RenderServiceEntry{.key = key, .service = &service});
+	}
+
+	template<class T>
+	T* get() const
+	{
+		const void* key = renderContextDetail::renderServiceKey<T>();
+		for (const RenderServiceEntry& entry : entries)
+		{
+			if (entry.key == key)
+				return static_cast<T*>(entry.service);
+		}
+		return nullptr;
+	}
+
+	template<class T>
+	T& require() const
+	{
+		if (T* service = get<T>())
+			return *service;
+		throw std::runtime_error("missing required render service");
+	}
+
+private:
+	std::vector<RenderServiceEntry> entries;
+};
 
 // Maximum render distance before scaling kicks in (for depth buffer precision)
 constexpr double maxRenderDistance = 0b10000000000000000;
@@ -46,7 +102,7 @@ struct RenderContext {
 	bool backfaceCullingEnabled{true};
 	bool showStarChunks{};
 	bool showTerrainChunks{};
-	VegetationSystem *vegetationSystem{};
+	RenderServiceRegistry* services{};
 	unsigned int sceneDepthTexture{}; // Scene depth texture for water/atmosphere shaders
 	unsigned int sceneColorTexture{}; // Copied scene color for shader-owned transparent compositing
 	glm::ivec2 screenSize{};		  // Screen dimensions for depth texture sampling
@@ -58,6 +114,20 @@ struct RenderContext {
 		glm::vec3 localPos = glm::vec3(bodyPosition - cameraPosition);
 		glm::mat4 translateMat = glm::translate(glm::mat4(1.0f), localPos);
 		return worldToScreen * translateMat;
+	}
+
+	template<class T>
+	T* service() const
+	{
+		return services ? services->get<T>() : nullptr;
+	}
+
+	template<class T>
+	T& requireService() const
+	{
+		if (!services)
+			throw std::runtime_error("missing render service registry");
+		return services->require<T>();
 	}
 };
 #endif
