@@ -23,6 +23,8 @@ struct Uniform {
 			glUniform4fv(location, 1, &newValue[0]);
 		} else if constexpr (std::is_same_v<ValueType, glm::vec3>) {
 			glUniform3fv(location, 1, &newValue[0]);
+		} else if constexpr (std::is_same_v<ValueType, glm::dvec2>) {
+			glUniform2dv(location, 1, &newValue[0]);
 		} else if constexpr (std::is_same_v<ValueType, glm::vec2>) {
 			glUniform2fv(location, 1, &newValue[0]);
 		} else if constexpr (std::is_same_v<ValueType, int>) {
