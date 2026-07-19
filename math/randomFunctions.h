@@ -29,8 +29,4 @@ inline glm::dvec3 randomPointInUnitSphere(std::mt19937 &random) {
 	}
 }
 
-inline glm::dvec3 randomPointInEllipsoid(std::mt19937 &random, double radius, double thickness) {
-	glm::dvec3 p = randomPointInUnitSphere(random);
-	return glm::dvec3(p.x * radius, p.y * thickness, p.z * radius);
-}
 #endif

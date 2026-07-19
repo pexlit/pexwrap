@@ -23,7 +23,6 @@ struct Texture {
 	);
 	Texture(const std::filesystem::path &path);
 	~Texture();
-	void setPixel(GLuint x, GLuint y, uint32_t color);
 	void setFiltering(GLenum minFilter, GLenum magFilter);
 
   private:

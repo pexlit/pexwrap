@@ -28,7 +28,6 @@ struct Mesh {
 	static void calculateNormals(std::span<glm::vec3> vertices, std::span<int> indices, std::vector<glm::vec3> &outNormals);
 };
 
-Mesh makeSquare();
 Mesh makeSphere();
 Mesh makeCube();
 #endif

@@ -76,12 +76,6 @@ Texture::Texture(const std::filesystem::path &path) {
 
 Texture::~Texture() { glDeleteTextures(1, &ID); }
 
-void Texture::setPixel(GLuint x, GLuint y, uint32_t color) {
-	glBindTexture(GL_TEXTURE_2D, ID);
-	glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, 1, 1, GL_RGB, GL_UNSIGNED_BYTE, &color);
-	glGenerateMipmap(GL_TEXTURE_2D);
-}
-
 void Texture::setFiltering(GLenum minFilter, GLenum magFilter) {
 	glBindTexture(GL_TEXTURE_2D, ID);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);

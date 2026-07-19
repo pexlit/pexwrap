@@ -4,22 +4,6 @@
 #include <numbers>
 #include <vector>
 
-Mesh makeSquare() {
-
-	glm::vec3 vertices[] = {
-		{0, 0, 0}, // bottom left
-		{1, 0, 0}, // bottom right
-		{1, 1, 0}, // top right
-		{0, 1, 0}  // top left
-	};
-	int indices[] = {// counter clockwise indices
-					 0, 1, 2, 0, 2, 3
-	};
-	// https://learnopengl.com/Getting-started/Hello-Triangle
-
-	return Mesh(vertices, indices);
-}
-
 void Mesh::calculateNormals(std::span<glm::vec3> vertices, std::span<int> indices, std::vector<glm::vec3> &outNormals) {
 	outNormals.assign(vertices.size(), glm::vec3(0.0f));
 	for (size_t i = 0; i + 2 < static_cast<size_t>(indices.size()); i += 3) {
