@@ -5,7 +5,6 @@
 #include "stb_image_write.h"
 #include <cmath>
 #include <iostream>
-#include <stdexcept>
 #include <vector>
 
 static PBRAtlas globalAtlas;
@@ -78,13 +77,6 @@ void PBRAtlas::init(
 	loadPreviewTextures(sourceDir, materials);
 }
 
-int PBRAtlas::getMaterialIndex(const std::string &name) const {
-	auto it = materialIndices.find(name);
-	if (it != materialIndices.end())
-		return it->second;
-	throw std::runtime_error("Unknown PBR terrain material: " + name);
-}
-
 const std::vector<std::string> &PBRAtlas::getMaterialNames() const
 {
 	return materialNames;
@@ -107,14 +99,12 @@ void PBRAtlas::bind(int materialUnit, int normalUnit) const {
 
 void PBRAtlas::configureMaterials(const std::vector<std::pair<std::string, std::string>> &materials)
 {
-	materialIndices.clear();
 	materialNames.clear();
 	materialNames.reserve(materials.size());
 
 	for (int materialIndex = 0; materialIndex < static_cast<int>(materials.size()); ++materialIndex) {
 		const std::string &name = materials[static_cast<std::size_t>(materialIndex)].first;
 		materialNames.push_back(name);
-		materialIndices[name] = materialIndex;
 	}
 
 	materialCount = static_cast<int>(materials.size());
@@ -209,11 +199,6 @@ bool PBRAtlas::loadFromCache(
 
 	stbi_image_free(materialData);
 	stbi_image_free(normalData);
-
-	// Set up material indices (order must match packing order)
-	materialIndices.clear();
-	for (int materialIndex = 0; materialIndex < materialCount; ++materialIndex)
-		materialIndices[materials[static_cast<std::size_t>(materialIndex)].first] = materialIndex;
 
 	return true;
 }

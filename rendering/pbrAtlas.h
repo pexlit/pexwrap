@@ -21,8 +21,6 @@ struct PBRAtlas {
 	GLuint materialArray{}; // RGBA: grayscale, roughness, AO, height
 	GLuint normalArray{};	// RGB: normal map
 
-	// Material name to array index mapping
-	std::unordered_map<std::string, int> materialIndices;
 	int materialCount{};
 
 	PBRAtlas() = default;
@@ -38,8 +36,6 @@ struct PBRAtlas {
 		const std::filesystem::path &cacheDir,
 		const std::vector<std::pair<std::string, std::string>> &materials);
 
-	// Get texture array index for a material name
-	int getMaterialIndex(const std::string &name) const;
 	const std::vector<std::string> &getMaterialNames() const;
 	Texture *getMaterialPreviewTexture(const std::string &name) const;
 
@@ -61,7 +57,6 @@ struct PBRAtlas {
 	bool loadFromCache(
 		const std::filesystem::path &cacheDir,
 		const std::vector<std::pair<std::string, std::string>> &materials);
-	void createArrayTextures();
 };
 
 // Global atlas instance
